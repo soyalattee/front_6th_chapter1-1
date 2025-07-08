@@ -12,7 +12,7 @@ const render = (page) => {
   const root = document.getElementById("root");
   root.innerHTML = page;
   bindProductListEvents();
-  // setupInfiniteScroll();
+  setupInfiniteScroll();
 };
 
 function bindProductListEvents() {
@@ -64,6 +64,7 @@ const state = {
   },
   loading: true,
   categories: null,
+  productInfiniteLoading: false,
 };
 
 async function fetchAndRenderProducts(params = {}) {
@@ -75,6 +76,20 @@ async function fetchAndRenderProducts(params = {}) {
   state.filters = productRes.filters;
   state.pagination = productRes.pagination;
   state.loading = false;
+  render(ProductListPage(state));
+}
+
+async function fetchInfiniteProducts(params = {}) {
+  render(ProductListPage(state));
+  const query = {
+    ...state.filters,
+    ...params,
+    page: params.page || state.pagination.page,
+  };
+  const productRes = await getProducts(query);
+  state.products = [...state.products, ...productRes.products];
+  state.pagination = productRes.pagination;
+  state.productInfiniteLoading = false;
   render(ProductListPage(state));
 }
 
@@ -92,6 +107,25 @@ if (import.meta.env.MODE !== "test") {
   enableMocking().then(main);
 } else {
   main();
+}
+
+let observer = null;
+function setupInfiniteScroll() {
+  if (observer) observer.disconnect();
+
+  const sentinel = document.getElementById("infinity-sentinel");
+  if (!sentinel) return;
+
+  observer = new IntersectionObserver(async (entries) => {
+    // isIntersecting: 요소가 화면에 보이는지 여부
+    if (entries[0].isIntersecting && state.pagination.hasNext && !state.productInfiniteLoading) {
+      observer.disconnect();
+      state.productInfiniteLoading = true;
+      await fetchInfiniteProducts({ page: state.pagination.page + 1, limit: state.pagination.limit });
+    }
+  });
+
+  observer.observe(sentinel);
 }
 
 //페이지당 상품수 변경
