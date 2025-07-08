@@ -62,8 +62,6 @@ function bindProductListEvents() {
       onSortChange(e.target.value);
     };
   }
-
-  // 페이지네이션 버튼 등도 이곳에서 바인딩 (추후 추가)
 }
 
 async function fetchAndRenderProducts(params = {}) {
