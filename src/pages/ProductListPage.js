@@ -60,24 +60,46 @@ const ProductListLoaded = (state) => {
             <div class="flex items-center gap-2">
               <label class="text-sm text-gray-600">카테고리:</label>
               <button data-breadcrumb="reset" class="text-xs hover:text-blue-800 hover:underline">전체</button>
+              ${
+                state.filters.category1
+                  ? `<span class="text-xs text-gray-500">&gt;</span><button data-breadcrumb="category1" data-category1="${state.filters.category1}" class="text-xs hover:text-blue-800 hover:underline">${state.filters.category1}</button>`
+                  : ""
+              }
+              ${
+                state.filters.category2
+                  ? `<span class="text-xs text-gray-500">&gt;</span><span class="text-xs text-gray-600 cursor-default">${state.filters.category2}</span>`
+                  : ""
+              }
             </div>
             <!-- 1depth 카테고리 -->
             <div class="flex flex-wrap gap-2">
-            ${
-              state.loading || !state.categories
-                ? '<div class="text-sm text-gray-500 italic">카테고리 로딩 중...</div>'
-                : Object.keys(state.categories)
-                    .map((category) => {
-                      return `
+            ${state.loading ? '<div class="text-sm text-gray-500 italic">카테고리 로딩 중...</div>' : ""}
+              ${
+                !state.loading && state.categories && state.filters.category1 === ""
+                  ? Object.keys(state.categories)
+                      .map((category) => {
+                        return `
                   <button data-category1="${category}" class="category1-filter-btn text-left px-3 py-2 text-sm rounded-md border transition-colors
                      bg-white border-gray-300 text-gray-700 hover:bg-gray-50">
                     ${category}
                   </button>
                 `;
-                    })
-                    .join("")
-            }  
-            
+                      })
+                      .join("")
+                  : ""
+              }  
+               ${
+                 !state.loading && state.categories && state.filters.category1 !== ""
+                   ? Object.keys(state.categories[state.filters.category1])
+                       .map((category) => {
+                         return `
+                          <button data-category1="${state.filters.category1}" data-category2="${category}" class="category2-filter-btn text-left px-3 py-2 text-sm rounded-md border transition-colors bg-white border-gray-300 text-gray-700 hover:bg-gray-50">
+                            ${category}
+                          </button>`;
+                       })
+                       .join("")
+                   : ""
+               } 
             </div>
             <!-- 2depth 카테고리 -->
           </div>

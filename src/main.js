@@ -65,6 +65,42 @@ function bindProductListEvents() {
       onSortChange(e.target.value);
     };
   }
+
+  // 카테고리 필터 버튼
+  const categoryButtons = document.querySelectorAll(".category1-filter-btn");
+  categoryButtons.forEach((button) => {
+    button.onclick = (e) => {
+      const category = e.target.getAttribute("data-category1");
+      state.filters.category1 = category;
+      onCategoryChange(category);
+    };
+  });
+  // 카테고리 2depth 필터 버튼
+  const category2Buttons = document.querySelectorAll(".category2-filter-btn");
+  category2Buttons.forEach((button) => {
+    button.onclick = (e) => {
+      const category = e.target.getAttribute("data-category2");
+      onCategory2Change(category);
+    };
+  });
+
+  // 브레드크럼 버튼들
+  const breadcrumbButtons = document.querySelectorAll("[data-breadcrumb]");
+  breadcrumbButtons.forEach((button) => {
+    button.onclick = (e) => {
+      const breadcrumbType = e.target.getAttribute("data-breadcrumb");
+      if (breadcrumbType === "reset") {
+        // 모든 카테고리 초기화
+        state.filters.category1 = "";
+        state.filters.category2 = "";
+        onCategoryReset();
+      } else if (breadcrumbType === "category1") {
+        // category2만 초기화
+        state.filters.category2 = "";
+        onCategory2Reset();
+      }
+    };
+  });
 }
 
 async function fetchAndRenderProducts(params = {}) {
@@ -97,7 +133,7 @@ async function main() {
   render(ProductListPage(state));
   const categoriesRes = await getCategories();
   state.categories = categoriesRes;
-
+  console.log(state.categories["생활/건강"]);
   fetchAndRenderProducts();
 }
 
@@ -147,4 +183,23 @@ function onSearch(searchText) {
 // 정렬 변경
 function onSortChange(sortType) {
   fetchAndRenderProducts({ sort: sortType, page: 1 });
+}
+
+// 카테고리 변경
+function onCategoryChange(category) {
+  fetchAndRenderProducts({ category1: category, page: 1 });
+}
+// 카테고리 변경
+function onCategory2Change(category) {
+  fetchAndRenderProducts({ category2: category, page: 1 });
+}
+
+// 모든 카테고리 초기화
+function onCategoryReset() {
+  fetchAndRenderProducts({ category1: "", category2: "", page: 1 });
+}
+
+// category2만 초기화
+function onCategory2Reset() {
+  fetchAndRenderProducts({ category2: "", page: 1 });
 }
