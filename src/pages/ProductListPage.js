@@ -31,7 +31,7 @@ const ProductListLoaded = (state) => {
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4m2.6 8L6 2H3m4 11v6a1 1 0 001 1h1a1 1 0 001-1v-6M13 13v6a1 1 0 001 1h1a1 1 0 001-1v-6"></path>
               </svg>
               <span
-                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">4</span>
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display: none;"></span>
             </button>
           </div>
         </div>
@@ -157,7 +157,7 @@ const ProductListLoaded = (state) => {
                 .map((product) => {
                   return `
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden product-card"
-              data-product-id="85067212996">
+              data-product-id=${product.productId}>
               <!-- 상품 이미지 -->
               <div class="aspect-square bg-gray-100 overflow-hidden cursor-pointer product-image">
                 <img src="${product.image}"
@@ -178,7 +178,7 @@ const ProductListLoaded = (state) => {
                 </div>
                 <!-- 장바구니 버튼 -->
                 <button class="w-full bg-blue-600 text-white text-sm py-2 px-3 rounded-md
-                        hover:bg-blue-700 transition-colors add-to-cart-btn" data-product-id="85067212996">
+                        hover:bg-blue-700 transition-colors add-to-cart-btn" data-product-id=${product.productId}>
                   장바구니 담기
                 </button>
               </div>
