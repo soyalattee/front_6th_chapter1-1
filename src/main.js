@@ -59,7 +59,6 @@ function bindProductListEvents() {
     sortSelect.value = state.filters.sort || "price_asc";
     sortSelect.onchange = (e) => {
       state.filters.sort = e.target.value;
-      console.log("정렬변경!");
       onSortChange(e.target.value);
     };
   }
@@ -68,7 +67,6 @@ function bindProductListEvents() {
 }
 
 async function fetchAndRenderProducts(params = {}) {
-  console.log("fetchAndRenderProducts start");
   state.loading = true;
   render(ProductListPage(state));
   // 기존 state.filters와 params를 합쳐서 요청
@@ -79,7 +77,6 @@ async function fetchAndRenderProducts(params = {}) {
   state.pagination = productRes.pagination;
   state.loading = false;
   render(ProductListPage(state));
-  console.log("fetchAndRenderProducts end");
 }
 
 async function fetchInfiniteProducts(params = {}) {
@@ -126,7 +123,6 @@ if (import.meta.env.MODE !== "test") {
 }
 
 function setupScrollInfinity() {
-  console.log("setupScrollInfinity");
   window.removeEventListener("scroll", handleScrollInfinity);
   window.addEventListener("scroll", handleScrollInfinity);
 }
