@@ -67,8 +67,6 @@ function bindProductListEvents() {
 }
 
 async function fetchAndRenderProducts(params = {}) {
-  state.loading = true;
-  render(ProductListPage(state));
   // 기존 state.filters와 params를 합쳐서 요청
   const query = { ...state.filters, ...params, page: params.page || state.pagination.page };
   const productRes = await getProducts(query);
