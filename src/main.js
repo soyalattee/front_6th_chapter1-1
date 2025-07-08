@@ -40,9 +40,12 @@ function bindProductListEvents() {
   const searchInput = document.getElementById("search-input");
   if (searchInput) {
     searchInput.value = state.filters.search || "";
-    searchInput.oninput = (e) => onSearch(e.target.value);
+    searchInput.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        onSearch(e.target.value);
+      }
+    };
   }
-
   // 개수 변경
   const limitSelect = document.getElementById("limit-select");
   if (limitSelect) {
