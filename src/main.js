@@ -1,6 +1,27 @@
 import ProductListPage from "./pages/ProductListPage.js";
 import { getProducts, getCategories } from "./api/productApi.js";
 
+const state = {
+  products: [],
+  pagination: {
+    page: 1,
+    limit: 20,
+    totalPages: 1,
+    hasNext: false,
+    hasPrev: false,
+    total: 0,
+  },
+  filters: {
+    search: "",
+    sort: "price_asc",
+    category1: "",
+    category2: "",
+  },
+  loading: true,
+  categories: null,
+  productInfiniteLoading: false,
+};
+
 const enableMocking = () =>
   import("./mocks/browser.js").then(({ worker }) =>
     worker.start({
@@ -12,7 +33,6 @@ const render = (page) => {
   const root = document.getElementById("root");
   root.innerHTML = page;
   bindProductListEvents();
-  setupInfiniteScroll();
 };
 
 function bindProductListEvents() {
@@ -46,28 +66,8 @@ function bindProductListEvents() {
   // 페이지네이션 버튼 등도 이곳에서 바인딩 (추후 추가)
 }
 
-const state = {
-  products: [],
-  pagination: {
-    page: 1,
-    limit: 20,
-    totalPages: 1,
-    hasNext: false,
-    hasPrev: false,
-    total: 0,
-  },
-  filters: {
-    search: "",
-    sort: "price_asc",
-    category1: "",
-    category2: "",
-  },
-  loading: true,
-  categories: null,
-  productInfiniteLoading: false,
-};
-
 async function fetchAndRenderProducts(params = {}) {
+  state.loading = true;
   render(ProductListPage(state));
   // 기존 state.filters와 params를 합쳐서 요청
   const query = { ...state.filters, ...params, page: params.page || state.pagination.page };
@@ -99,7 +99,7 @@ async function main() {
   const categoriesRes = await getCategories();
   state.categories = categoriesRes;
 
-  await fetchAndRenderProducts();
+  fetchAndRenderProducts();
 }
 
 // 애플리케이션 시작
@@ -107,25 +107,20 @@ if (import.meta.env.MODE !== "test") {
   enableMocking().then(main);
 } else {
   main();
+  setupScrollInfinity();
 }
 
-let observer = null;
-function setupInfiniteScroll() {
-  if (observer) observer.disconnect();
+function setupScrollInfinity() {
+  window.removeEventListener("scroll", handleScrollInfinity);
+  window.addEventListener("scroll", handleScrollInfinity);
+}
 
-  const sentinel = document.getElementById("infinity-sentinel");
-  if (!sentinel) return;
-
-  observer = new IntersectionObserver(async (entries) => {
-    // isIntersecting: 요소가 화면에 보이는지 여부
-    if (entries[0].isIntersecting && state.pagination.hasNext && !state.productInfiniteLoading) {
-      observer.disconnect();
-      state.productInfiniteLoading = true;
-      await fetchInfiniteProducts({ page: state.pagination.page + 1, limit: state.pagination.limit });
-    }
-  });
-
-  observer.observe(sentinel);
+function handleScrollInfinity() {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+  if (scrollTop + clientHeight >= scrollHeight - 100 && state.pagination.hasNext && !state.productInfiniteLoading) {
+    state.productInfiniteLoading = true;
+    fetchInfiniteProducts({ page: state.pagination.page + 1, limit: state.pagination.limit });
+  }
 }
 
 //페이지당 상품수 변경
