@@ -12,6 +12,7 @@ const render = (page) => {
   const root = document.getElementById("root");
   root.innerHTML = page;
   bindProductListEvents();
+  // setupInfiniteScroll();
 };
 
 function bindProductListEvents() {
@@ -25,17 +26,21 @@ function bindProductListEvents() {
   // 개수 변경
   const limitSelect = document.getElementById("limit-select");
   if (limitSelect) {
-    console.log("limitSelect", state.pagination.limit);
     limitSelect.value = state.pagination.limit || 20;
-    limitSelect.onchange = (e) => onLimitChange(Number(e.target.value));
+    limitSelect.onchange = (e) => {
+      state.pagination.limit = Number(e.target.value);
+      onLimitChange(Number(e.target.value));
+    };
   }
 
   // 정렬 변경
   const sortSelect = document.getElementById("sort-select");
   if (sortSelect) {
-    console.log("sortSelect", state.filters.sort);
-    sortSelect.value = state.filters.sort || "name_asc";
-    sortSelect.onchange = (e) => onSortChange(e.target.value);
+    sortSelect.value = state.filters.sort || "price_asc";
+    sortSelect.onchange = (e) => {
+      state.filters.sort = e.target.value;
+      onSortChange(e.target.value);
+    };
   }
 
   // 페이지네이션 버튼 등도 이곳에서 바인딩 (추후 추가)
@@ -66,10 +71,10 @@ async function fetchAndRenderProducts(params = {}) {
   // 기존 state.filters와 params를 합쳐서 요청
   const query = { ...state.filters, ...params, page: params.page || state.pagination.page };
   const productRes = await getProducts(query);
-  state.loading = false;
   state.products = productRes.products;
   state.filters = productRes.filters;
   state.pagination = productRes.pagination;
+  state.loading = false;
   render(ProductListPage(state));
 }
 
@@ -89,10 +94,6 @@ if (import.meta.env.MODE !== "test") {
   main();
 }
 
-// 페이지 이동은 인피니티로 구현 예정 현재는 1페이지만 구현
-// function onPageChange(newPage) {
-//   fetchAndRenderProducts({ page: newPage });
-// }
 //페이지당 상품수 변경
 function onLimitChange(limit) {
   fetchAndRenderProducts({ limit: limit, page: 1 });
