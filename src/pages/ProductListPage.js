@@ -66,15 +66,18 @@ const ProductListLoaded = (state) => {
             ${
               state.loading || !state.categories
                 ? '<div class="text-sm text-gray-500 italic">카테고리 로딩 중...</div>'
-                : Object.keys(state.categories).map((category) => {
-                    return `
+                : Object.keys(state.categories)
+                    .map((category) => {
+                      return `
                   <button data-category1="${category}" class="category1-filter-btn text-left px-3 py-2 text-sm rounded-md border transition-colors
                      bg-white border-gray-300 text-gray-700 hover:bg-gray-50">
                     ${category}
                   </button>
                 `;
-                  })
-            }
+                    })
+                    .join("")
+            }  
+            
             </div>
             <!-- 2depth 카테고리 -->
           </div>
