@@ -7,9 +7,13 @@ const enableMocking = () =>
     }),
   );
 
-function main() {
+const render = (page) => {
   const root = document.getElementById("root");
-  root.innerHTML = ProductListPage();
+  root.innerHTML = page;
+};
+
+function main() {
+  render(ProductListPage());
 }
 
 // 애플리케이션 시작
