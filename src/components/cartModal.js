@@ -9,6 +9,7 @@ export const cartModal = (cart) => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m2.6 8L6 2H3m4 11v6a1 1 0 001 1h1a1 1 0 001-1v-6M13 13v6a1 1 0 001 1h1a1 1 0 001-1v-6"></path>
         </svg>
         장바구니 
+        <span class="text-sm font-normal text-gray-600 ml-1">(${cart.length})</span>
       </h2>
       <button id="cart-modal-close-btn" class="text-gray-400 hover:text-gray-600 p-1">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,7 +20,13 @@ export const cartModal = (cart) => {
     
     <!-- 컨텐츠 -->
     <div class="flex flex-col max-h-[calc(90vh-120px)]">
-      <!-- 빈 장바구니 -->
+       <!-- 전체 선택 섹션 -->
+      <div class="p-4 border-b border-gray-200 bg-gray-50">
+        <label class="flex items-center text-sm text-gray-700">
+          <input type="checkbox" id="cart-modal-select-all-checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2">
+          전체선택 (${cart.length}개)
+        </label>
+      </div>
       ${
         cart.length === 0
           ? `<div class="flex-1 flex items-center justify-center p-8">
@@ -33,9 +40,11 @@ export const cartModal = (cart) => {
           <p class="text-gray-600">원하는 상품을 담아보세요!</p>
         </div>
       </div>`
-          : cart
-              .map((item) => {
-                return `
+          : `<div class="flex-1 overflow-y-auto">
+               <div class="p-4 space-y-4">
+        ${cart
+          .map((item) => {
+            return `
               <div class="flex items-center py-3 border-b border-gray-100 cart-item" data-product-id="${item.productId}">
             <!-- 선택 체크박스 -->
             <label class="flex items-center mr-3">
@@ -83,9 +92,34 @@ export const cartModal = (cart) => {
             </div>
           </div>
               `;
-              })
-              .join("")
-      }
+          })
+          .join("")}
+               </div>
+            </div>
+            `
+      } 
+    </div>
+     <!-- 하단 액션 -->
+    <div class="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+      <!-- 선택된 아이템 정보 -->
+      <!-- 총 금액 -->
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-lg font-bold text-gray-900">총 금액</span>
+        <span class="text-xl font-bold text-blue-600">${cart.reduce((sum, item) => sum + item.lprice * item.quantity, 0)}원</span>
+      </div>
+      <!-- 액션 버튼들 -->
+      <div class="space-y-2">
+        <div class="flex gap-2">
+          <button id="cart-modal-clear-cart-btn" class="flex-1 bg-gray-600 text-white py-2 px-4 rounded-md 
+                   hover:bg-gray-700 transition-colors text-sm">
+            전체 비우기
+          </button>
+          <button id="cart-modal-checkout-btn" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md 
+                   hover:bg-blue-700 transition-colors text-sm">
+            구매하기
+          </button>
+        </div>
+      </div>
     </div>
   </div>
   </div>
