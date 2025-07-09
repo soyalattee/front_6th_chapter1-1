@@ -363,6 +363,9 @@ function bindCartModalEvents(modal) {
   increaseButtons.forEach((button) => {
     button.onclick = (e) => {
       const productId = e.target.closest("button").getAttribute("data-product-id");
+      //수량 즉각 증가  적용
+      const quantityInput = document.querySelector(".quantity-input");
+      quantityInput.value = Number(quantityInput.value) + 1;
       updateCartItemQuantity(productId, 1);
       updateCartModal(modal);
     };
@@ -373,6 +376,9 @@ function bindCartModalEvents(modal) {
   decreaseButtons.forEach((button) => {
     button.onclick = (e) => {
       const productId = e.target.closest("button").getAttribute("data-product-id");
+      //수량 즉각 감소 적용
+      const quantityInput = document.querySelector(".quantity-input");
+      quantityInput.value = quantityInput.value - 1;
       updateCartItemQuantity(productId, -1);
       updateCartModal(modal);
     };
@@ -391,11 +397,9 @@ function bindCartModalEvents(modal) {
 
 // 장바구니 아이템 수량 업데이트
 function updateCartItemQuantity(productId, change) {
-  console.log("update CartItemQuantity?", state.cart);
   const cartItem = state.cart.find((item) => item.productId === productId);
   if (cartItem) {
     cartItem.quantity += change;
-    console.log("증가되었니?", state.cart);
     // 수량이 0 이하가 되면 장바구니에서 제거
     if (cartItem.quantity <= 0) {
       removeFromCart(productId);
