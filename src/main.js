@@ -384,6 +384,7 @@ function bindCartModalEvents(modal) {
     button.onclick = (e) => {
       const productId = e.target.getAttribute("data-product-id");
       removeFromCart(productId);
+      updateQuantityInputs();
       updateCartModal(modal);
     };
   });
