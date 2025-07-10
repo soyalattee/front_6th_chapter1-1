@@ -1,134 +1,195 @@
-export const cartModal = (cart) => {
-  const selectedCount = cart.filter((item) => item.isChecked).length;
-  return `
-  <div class="modal-overlay flex fixed bg-black/50 top-0 left-0 z-50 min-h-full w-full items-end justify-center p-0 sm:items-center sm:p-4">
-  <div class="flex min-h-full cart-modal items-end justify-center p-0 sm:items-center sm:p-4">
-    <div class="relative bg-white rounded-t-lg sm:rounded-lg shadow-xl w-full max-w-md sm:max-w-lg max-h-[90vh] overflow-hidden">
-      <!-- 헤더 -->
-      <div class="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-        <h2 class="text-lg font-bold text-gray-900 flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m2.6 8L6 2H3m4 11v6a1 1 0 001 1h1a1 1 0 001-1v-6M13 13v6a1 1 0 001 1h1a1 1 0 001-1v-6"></path>
-          </svg>
-          장바구니 
-          <span class="text-sm font-normal text-gray-600 ml-1">(${cart.length})</span>
-        </h2>
-        <button id="cart-modal-close-btn" class="text-gray-400 hover:text-gray-600 p-1">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      
-      <!-- 컨텐츠 -->
-      <div class="flex flex-col max-h-[calc(90vh-120px)]">
-        <!-- 전체 선택 섹션 -->
-        <div class="p-4 border-b border-gray-200 bg-gray-50">
-          <label class="flex items-center text-sm text-gray-700">
-            <input type="checkbox" id="cart-modal-select-all-checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2">
-            전체선택 (${cart.length}개)
-          </label>
-        </div>
-        ${
-          cart.length === 0
-            ? `<div class="flex-1 flex items-center justify-center p-8">
-          <div class="text-center">
-            <div class="text-gray-400 mb-4">
-              <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m2.6 8L6 2H3m4 11v6a1 1 0 001 1h1a1 1 0 001-1v-6M13 13v6a1 1 0 001 1h1a1 1 0 001-1v-6"></path>
-              </svg>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">장바구니가 비어있습니다</h3>
-            <p class="text-gray-600">원하는 상품을 담아보세요!</p>
-          </div>
-        </div>`
-            : `<div class="flex-1 overflow-y-auto">
-                <div class="p-4 space-y-4">
-          ${cart
-            .map((item) => {
-              return `
-                <div class="flex items-center py-3 border-b border-gray-100 cart-item" data-product-id="${item.productId}">
-              <!-- 선택 체크박스 -->
-              <label class="flex items-center mr-3">
-                <input type="checkbox" class="cart-item-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded 
-              focus:ring-blue-500" data-product-id="${item.productId}" ${item.isChecked ? "checked" : ""}>
-              </label>
-              <!-- 상품 이미지 -->
-              <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden mr-3 flex-shrink-0">
-                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover cursor-pointer cart-item-image" data-product-id="${item.productId}">
-              </div>
-              <!-- 상품 정보 -->
-              <div class="flex-1 min-w-0">
-                <h4 class="text-sm font-medium text-gray-900 truncate cursor-pointer cart-item-title" data-product-id="${item.productId}">
-                  ${item.title}
-                </h4>
-                <p class="text-sm text-gray-600 mt-1">
-                  ${item.lprice}원
-                </p>
-                <!-- 수량 조절 -->
-                <div class="flex items-center mt-2">
-                  <button class="quantity-decrease-btn w-7 h-7 flex items-center justify-center 
-              border border-gray-300 rounded-l-md bg-gray-50 hover:bg-gray-100" data-product-id="${item.productId}">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
-                    </svg> 
-                  </button>
-                  <input type="number" value="${item.quantity}" min="1" class="quantity-input w-12 h-7 text-center text-sm border-t border-b 
-              border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500" disabled="" data-product-id="${item.productId}">
-                  <button class="quantity-increase-btn w-7 h-7 flex items-center justify-center 
-              border border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100" data-product-id="${item.productId}">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <!-- 가격 및 삭제 -->
-              <div class="text-right ml-3">
-                <p class="text-sm font-medium text-gray-900">
-                  ${item.lprice * item.quantity}원
-                </p>
-                <button class="cart-item-remove-btn mt-1 text-xs text-red-600 hover:text-red-800" data-product-id="${item.productId}">
-                  삭제
-                </button>
-              </div>
-            </div>
-                `;
-            })
-            .join("")}
-                </div>
-              </div>
-              `
-        } 
-      </div>
-      <!-- 하단 액션 -->
-      <div class="sticky bottom-0 bg-white border-t border-gray-200 p-4">
-        <!-- 선택된 아이템 정보 -->
-        <!-- 총 금액 -->
-        <div class="flex justify-between items-center mb-4">
-          <span class="text-lg font-bold text-gray-900">총 금액</span>
-          <span class="text-xl font-bold text-blue-600">${cart.reduce((sum, item) => sum + item.lprice * item.quantity, 0)}원</span>
-        </div>
-        <!-- 액션 버튼들 -->
-        <div class="space-y-2">
-          <button id="cart-modal-remove-selected-btn" class="w-full bg-red-600 text-white py-2 px-4 rounded-md 
-                    hover:bg-red-700 transition-colors text-sm">
-            선택한 상품 삭제 (${selectedCount}개)
-          </button>
-          <div class="flex gap-2">
-            <button id="cart-modal-clear-cart-btn" class="flex-1 bg-gray-600 text-white py-2 px-4 rounded-md 
-                    hover:bg-gray-700 transition-colors text-sm">
-              전체 비우기
-            </button>
-            <button id="cart-modal-checkout-btn" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md 
-                    hover:bg-blue-700 transition-colors text-sm">
-              구매하기
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
-  </div>
-`;
+import { CartUI } from "../views/CartUI.js";
+import { cartStore } from "../store/cartStore.js";
+
+export const cartModal = ({ state, setState }) => {
+  let modal = null;
+
+  // 장바구니 모달 업데이트
+  function renderCartModal() {
+    console.log("renderCartModal");
+    if (!modal) return;
+    // 모달 내용을 새로운 cart 데이터로 업데이트
+    modal.innerHTML = CartUI(state.cart);
+    // 이벤트 다시 바인딩
+    bindCartModalEvents();
+  }
+  // quantity-input 요소들의 value를 cart 데이터에 맞춰 업데이트
+  function updateQuantityInputs() {
+    console.log("input value 업데이트");
+    const quantityInputs = document.querySelectorAll(".quantity-input");
+    quantityInputs.forEach((input) => {
+      const productId = input.getAttribute("data-product-id");
+      const cartItem = state.cart.find((item) => item.productId === productId);
+      if (cartItem) {
+        input.value = cartItem.quantity;
+        console.log("input value 업데이트 완료", input.value);
+      } else {
+        input.value = 0;
+      }
+    });
+  }
+
+  // 장바구니에 상품 추가
+  function addToCart({ product }) {
+    cartStore.actions.addToCart(cartStore.state, product);
+    updateQuantityInputs();
+    setState({ cart: cartStore.state.cart });
+    // 장바구니 아이콘의 숫자 업데이트
+    // page.render();
+  }
+
+  // 장바구니 모달 표시
+  function openCartModal() {
+    console.log("openCartModal");
+    // 기존 모달이 있다면 제거
+    const existingModal = document.getElementById("modal-root");
+    if (existingModal) {
+      existingModal.remove();
+    }
+    modal = document.createElement("div");
+    modal.id = "modal-root";
+    // 스크롤 막기
+    document.body.style.overflow = "hidden";
+
+    renderCartModal();
+    // 모달을 body에 추가
+    document.body.appendChild(modal);
+
+    // 모달 닫기 함수
+    const closeModal = () => {
+      console.log("closeModal");
+      modal.remove();
+      // 스크롤 다시 활성화
+      document.body.style.overflow = "";
+    };
+
+    // 닫기 버튼 이벤트
+    const closeBtn = modal.querySelector("#cart-modal-close-btn");
+    closeBtn.onclick = closeModal;
+
+    // 모달 외부 클릭 시 닫기
+    modal.onclick = (e) => {
+      if (e.target === modal.querySelector(".cart-modal-overlay")) {
+        closeModal();
+      }
+    };
+
+    // ESC 키로 닫기
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        closeModal();
+        document.removeEventListener("keydown", handleEsc);
+      }
+    };
+    document.addEventListener("keydown", handleEsc);
+  }
+
+  // 장바구니 모달 내부 이벤트 바인딩
+  function bindCartModalEvents() {
+    // 수량 증가 버튼
+    const increaseButtons = modal.querySelectorAll(".quantity-increase-btn");
+    increaseButtons.forEach((button) => {
+      button.onclick = (e) => {
+        const productId = e.target.closest("button").getAttribute("data-product-id");
+        console.log("button clicked", productId);
+        updateQuantityInputs();
+        updateCartItemQuantity(productId, 1);
+        // renderCartModal();
+      };
+    });
+
+    // 수량 감소 버튼
+    const decreaseButtons = modal.querySelectorAll(".quantity-decrease-btn");
+    decreaseButtons.forEach((button) => {
+      button.onclick = (e) => {
+        const productId = e.target.closest("button").getAttribute("data-product-id");
+
+        updateQuantityInputs();
+        updateCartItemQuantity(productId, -1);
+        // renderCartModal();
+      };
+    });
+
+    // 삭제 버튼
+    const removeButtons = modal.querySelectorAll(".cart-item-remove-btn");
+    removeButtons.forEach((button) => {
+      button.onclick = (e) => {
+        const productId = e.target.getAttribute("data-product-id");
+        removeFromCart(productId);
+        // renderCartModal();
+      };
+    });
+
+    // 상품 선택 체크박스
+    const checkboxes = modal.querySelectorAll(".cart-item-checkbox");
+    checkboxes.forEach((checkbox) => {
+      checkbox.onclick = (e) => {
+        const productId = e.target.getAttribute("data-product-id");
+        const isChecked = e.target.checked;
+        const newCart = state.cart.map((item) => {
+          if (item.productId === productId) {
+            item.isChecked = isChecked;
+          }
+          return item;
+        });
+        setState({ cart: newCart });
+
+        // renderCartModal();
+      };
+    });
+
+    // 선택한 상품 삭제 버튼
+    const removeSelectedBtn = modal.querySelector("#cart-modal-remove-selected-btn");
+    removeSelectedBtn.onclick = () => {
+      // 체크된 체크박스의 productId 수집
+      const checkedBoxes = document.querySelectorAll(".cart-item-checkbox:checked");
+      const selectedIds = Array.from(checkedBoxes).map((cb) => cb.dataset.productId);
+      selectedIds.forEach((id) => removeFromCart(id));
+      // renderCartModal();
+    };
+
+    //전체 선택 버튼
+    const selectAllCheckbox = modal.querySelector("#cart-modal-select-all-checkbox");
+    selectAllCheckbox.onclick = (e) => {
+      const isChecked = e.target.checked;
+      const newCart = state.cart.map((item) => {
+        item.isChecked = isChecked;
+        return item;
+      });
+      setState({ cart: newCart });
+      // renderCartModal();
+    };
+    // 비우기 버튼
+    const clearCartBtn = modal.querySelector("#cart-modal-clear-cart-btn");
+    clearCartBtn.onclick = () => {
+      removeAllFromCart();
+      // renderCartModal();
+    };
+  }
+
+  // 장바구니 아이템 수량 업데이트
+  function updateCartItemQuantity(productId, change) {
+    cartStore.actions.updateCartItemQuantity(cartStore.state, productId, change);
+    console.log("set 할거야");
+    setState({ cart: cartStore.state.cart });
+    console.log("set 했어");
+    // 장바구니 아이콘 업데이트
+    // renderAndBindEvents(ProductListPage(state));
+  }
+
+  // 장바구니에서 아이템 제거
+  function removeFromCart(productId) {
+    cartStore.actions.removeFromCart(cartStore.state, productId);
+    setState({ cart: cartStore.state.cart });
+    // renderAndBindEvents(ProductListPage(state));
+  }
+  //장바구니 비우기
+  function removeAllFromCart() {
+    cartStore.actions.removeAllFromCart(cartStore.state);
+    setState({ cart: cartStore.state.cart });
+    // renderAndBindEvents(ProductListPage(state));
+  }
+
+  // return CartUI(cart);
+  return { openCartModal, updateQuantityInputs, addToCart, renderCartModal };
 };

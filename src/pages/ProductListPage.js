@@ -5,12 +5,12 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast, se
   const pageInstance = {};
   const createPage = async () => {
     setupScrollInfinity();
-    render();
+    // render();
     const categoriesRes = await getCategories();
     setState({ categories: categoriesRes });
     await fetchProducts();
     setState({ loading: false });
-    render();
+    // render();
   };
   const render = () => {
     const root = document.getElementById("root");
