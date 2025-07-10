@@ -35,7 +35,6 @@ const render = (page) => {
   const root = document.getElementById("root");
   root.innerHTML = page;
   bindProductListEvents();
-  updateCartIcon();
 };
 
 function bindProductListEvents() {
@@ -239,23 +238,7 @@ function addToCart(product) {
   state.cart = cartStore.state.cart;
   updateQuantityInputs();
   // 장바구니 아이콘의 숫자 업데이트
-  updateCartIcon();
-}
-
-// 장바구니 아이콘 업데이트
-function updateCartIcon() {
-  const cartIcon = document.querySelector("#cart-icon-btn span");
-  if (cartIcon) {
-    const totalItems = state.cart.length;
-    cartIcon.textContent = totalItems;
-
-    // 아이템이 없으면 숨기기
-    if (totalItems === 0) {
-      cartIcon.style.display = "none";
-    } else {
-      cartIcon.style.display = "flex";
-    }
-  }
+  render(ProductListPage(state));
 }
 
 // 토스트 메시지 표시
@@ -395,14 +378,14 @@ function updateCartItemQuantity(productId, change) {
   state.cart = cartStore.state.cart;
 
   // 장바구니 아이콘 업데이트
-  updateCartIcon();
+  render(ProductListPage(state));
 }
 
 // 장바구니에서 아이템 제거
 function removeFromCart(productId) {
   cartStore.actions.removeFromCart(cartStore.state, productId);
   state.cart = cartStore.state.cart;
-  updateCartIcon();
+  render(ProductListPage(state));
 }
 
 // 장바구니 모달 업데이트
