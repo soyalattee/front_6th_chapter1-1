@@ -1,28 +1,8 @@
 import ProductListPage from "./pages/ProductListPage.js";
 import { cartModal } from "./components/cartModal.js";
 import { cartStore } from "./store/cartStore.js";
+import { state, setState, subscribe } from "./store/stateStore.js";
 let modal = null;
-const state = {
-  products: [],
-  pagination: {
-    page: 1,
-    limit: 20,
-    totalPages: 1,
-    hasNext: false,
-    hasPrev: false,
-    total: 0,
-  },
-  filters: {
-    search: "",
-    sort: "price_asc",
-    category1: "",
-    category2: "",
-  },
-  cart: [],
-  loading: true,
-  categories: null,
-  productInfiniteLoading: false,
-};
 
 // 토스트 메시지 표시
 function showToast(message) {
@@ -57,12 +37,12 @@ function showToast(message) {
 }
 
 // 장바구니에 상품 추가
-function addToCart({ product, page }) {
+function addToCart({ product }) {
   cartStore.actions.addToCart(cartStore.state, product);
-  state.cart = cartStore.state.cart;
+  setState({ cart: cartStore.state.cart });
   updateQuantityInputs();
   // 장바구니 아이콘의 숫자 업데이트
-  page.render();
+  // page.render();
 }
 
 // 장바구니 모달 업데이트
@@ -105,7 +85,7 @@ function openCartModal() {
 
   // 모달 외부 클릭 시 닫기
   modal.onclick = (e) => {
-    if (e.target === modal.querySelector(".modal-overlay")) {
+    if (e.target === modal.querySelector(".cart-modal-overlay")) {
       closeModal();
     }
   };
@@ -162,10 +142,14 @@ function bindCartModalEvents() {
     checkbox.onclick = (e) => {
       const productId = e.target.getAttribute("data-product-id");
       const isChecked = e.target.checked;
-      const cartItem = state.cart.find((item) => item.productId === productId);
-      if (cartItem) {
-        cartItem.isChecked = isChecked;
-      }
+      const newCart = state.cart.map((item) => {
+        if (item.productId === productId) {
+          item.isChecked = isChecked;
+        }
+        return item;
+      });
+      setState({ cart: newCart });
+
       renderCartModal();
     };
   });
@@ -184,9 +168,11 @@ function bindCartModalEvents() {
   const selectAllCheckbox = modal.querySelector("#cart-modal-select-all-checkbox");
   selectAllCheckbox.onclick = (e) => {
     const isChecked = e.target.checked;
-    state.cart.forEach((item) => {
+    const newCart = state.cart.map((item) => {
       item.isChecked = isChecked;
+      return item;
     });
+    setState({ cart: newCart });
     renderCartModal();
   };
   // 비우기 버튼
@@ -200,8 +186,7 @@ function bindCartModalEvents() {
 // 장바구니 아이템 수량 업데이트
 function updateCartItemQuantity(productId, change) {
   cartStore.actions.updateCartItemQuantity(cartStore.state, productId, change);
-  state.cart = cartStore.state.cart;
-
+  setState({ cart: cartStore.state.cart });
   // 장바구니 아이콘 업데이트
   // renderAndBindEvents(ProductListPage(state));
 }
@@ -209,13 +194,13 @@ function updateCartItemQuantity(productId, change) {
 // 장바구니에서 아이템 제거
 function removeFromCart(productId) {
   cartStore.actions.removeFromCart(cartStore.state, productId);
-  state.cart = cartStore.state.cart;
+  setState({ cart: cartStore.state.cart });
   // renderAndBindEvents(ProductListPage(state));
 }
 //장바구니 비우기
 function removeAllFromCart() {
   cartStore.actions.removeAllFromCart(cartStore.state);
-  state.cart = cartStore.state.cart;
+  setState({ cart: cartStore.state.cart });
   // renderAndBindEvents(ProductListPage(state));
 }
 
@@ -241,14 +226,17 @@ const enableMocking = () =>
   );
 
 function main() {
-  state.loading = true;
+  setState({ loading: true });
   // localStorage에서 cart 데이터 로드
   cartStore.loadFromStorage();
-  state.cart = cartStore.state.cart;
+  setState({ cart: cartStore.state.cart });
   updateQuantityInputs();
   //TODO: 일단 productListPage 바로 생성
-  const page = ProductListPage({ state, openCartModal, addToCart, showToast });
+  const page = ProductListPage({ state, openCartModal, addToCart, showToast, setState });
   page.createPage();
+  subscribe(() => {
+    page.render();
+  });
 }
 
 // 라우터 설정

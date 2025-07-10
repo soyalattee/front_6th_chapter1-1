@@ -1,31 +1,28 @@
 import { getProducts, getCategories } from "../api/productApi.js";
 import { ProductListUI } from "../views/ProductListUI.js";
 
-export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) => {
+export const ProductListPage = ({ state, openCartModal, addToCart, showToast, setState }) => {
   const pageInstance = {};
   const createPage = async () => {
     setupScrollInfinity();
     render();
     const categoriesRes = await getCategories();
-    state.categories = categoriesRes;
+    setState({ categories: categoriesRes });
     await fetchProducts();
-    state.loading = false;
+    setState({ loading: false });
     render();
   };
   const render = () => {
     const root = document.getElementById("root");
     root.innerHTML = ProductListUI(state);
-    bindProductListEvents(pageInstance);
+    bindProductListEvents();
   };
 
   const fetchProducts = async (params = {}) => {
     // 기존 state.filters와 params를 합쳐서 요청
     const query = { ...state.filters, ...params, page: params.page || state.pagination.page };
     const productRes = await getProducts(query);
-    state.products = productRes.products;
-    state.filters = productRes.filters;
-    state.pagination = productRes.pagination;
-    state.loading = false;
+    setState({ products: productRes.products, filters: productRes.filters, pagination: productRes.pagination });
     // 렌더링은 여기서 하지 않음
   };
   const setupScrollInfinity = () => {
@@ -36,7 +33,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) 
   const handleScrollInfinity = () => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
     if (scrollTop + clientHeight >= scrollHeight - 100 && state.pagination.hasNext && !state.productInfiniteLoading) {
-      state.productInfiniteLoading = true;
+      setState({ productInfiniteLoading: true });
       fetchInfiniteProducts({ page: state.pagination.page + 1, limit: state.pagination.limit });
     }
   };
@@ -49,47 +46,33 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) 
       page: params.page || state.pagination.page,
     };
     const productRes = await getProducts(query);
-    state.products = [...state.products, ...productRes.products];
-    state.pagination = productRes.pagination;
-    state.productInfiniteLoading = false;
-    render();
+    setState({ products: [...state.products, ...productRes.products], pagination: productRes.pagination });
+    setState({ productInfiniteLoading: false });
+    // render();
   };
 
   //페이지당 상품수 변경
-  const onLimitChange = (limit) => {
-    fetchProducts({ limit: limit, page: 1 }).then(() => render());
-  };
+  const onLimitChange = (limit) => fetchProducts({ limit: limit, page: 1 });
 
   // 검색
-  const onSearch = (searchText) => {
-    fetchProducts({ search: searchText, page: 1 }).then(() => render());
-  };
+  const onSearch = (searchText) => fetchProducts({ search: searchText, page: 1 });
 
   // 정렬 변경
-  const onSortChange = (sortType) => {
-    fetchProducts({ sort: sortType, page: 1 }).then(() => render());
-  };
+  const onSortChange = (sortType) => fetchProducts({ sort: sortType, page: 1 });
 
   // 카테고리 변경
-  const onCategoryChange = (category) => {
-    fetchProducts({ category1: category, page: 1 }).then(() => render());
-  };
-  // 카테고리 변경
-  const onCategory2Change = (category) => {
-    fetchProducts({ category2: category, page: 1 }).then(() => render());
-  };
+  const onCategoryChange = (category) => fetchProducts({ category1: category, page: 1 });
+
+  // 카테고리2 변경
+  const onCategory2Change = (category) => fetchProducts({ category2: category, page: 1 });
 
   // 모든 카테고리 초기화
-  const onCategoryReset = () => {
-    fetchProducts({ category1: "", category2: "", page: 1 }).then(() => render());
-  };
+  const onCategoryReset = () => fetchProducts({ category1: "", category2: "", page: 1 });
 
   // category2만 초기화
-  const onCategory2Reset = () => {
-    fetchProducts({ category2: "", page: 1 }).then(() => render());
-  };
+  const onCategory2Reset = () => fetchProducts({ category2: "", page: 1 });
 
-  const bindProductListEvents = (pageInstance) => {
+  const bindProductListEvents = () => {
     // 검색
     const searchInput = document.getElementById("search-input");
     if (searchInput) {
@@ -105,7 +88,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) 
     if (limitSelect) {
       limitSelect.value = state.pagination.limit || 20;
       limitSelect.onchange = (e) => {
-        state.pagination.limit = Number(e.target.value);
+        setState({ pagination: { ...state.pagination, limit: Number(e.target.value) } });
         onLimitChange(Number(e.target.value));
       };
     }
@@ -115,7 +98,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) 
     if (sortSelect) {
       sortSelect.value = state.filters.sort || "price_asc";
       sortSelect.onchange = (e) => {
-        state.filters.sort = e.target.value;
+        setState({ filters: { ...state.filters, sort: e.target.value } });
         onSortChange(e.target.value);
       };
     }
@@ -125,7 +108,6 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) 
     categoryButtons.forEach((button) => {
       button.onclick = (e) => {
         const category = e.target.getAttribute("data-category1");
-        state.filters.category1 = category;
         onCategoryChange(category);
       };
     });
@@ -146,12 +128,11 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) 
         const breadcrumbType = e.target.getAttribute("data-breadcrumb");
         if (breadcrumbType === "reset") {
           // 모든 카테고리 초기화
-          state.filters.category1 = "";
-          state.filters.category2 = "";
+          setState({ filters: { ...state.filters, category1: "", category2: "" } });
           onCategoryReset();
         } else if (breadcrumbType === "category1") {
           // category2만 초기화
-          state.filters.category2 = "";
+          setState({ filters: { ...state.filters, category2: "" } });
           onCategory2Reset();
         }
       };
@@ -172,7 +153,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, showToast }) 
         const productId = e.target.getAttribute("data-product-id");
         const product = state.products.find((p) => p.productId === productId);
         if (product) {
-          addToCart({ product, page: pageInstance });
+          addToCart({ product });
           showToast("장바구니에 추가되었습니다");
         }
       };
