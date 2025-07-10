@@ -1,7 +1,8 @@
 import { getProducts, getCategories } from "../api/productApi.js";
 import { ProductListUI } from "../views/ProductListUI.js";
+import { showToast } from "../components/Toast.js";
 
-export const ProductListPage = ({ state, openCartModal, addToCart, showToast, setState }) => {
+export const ProductListPage = ({ state, openCartModal, addToCart, setState }) => {
   const pageInstance = {};
   const createPage = async () => {
     setupScrollInfinity();
