@@ -6,7 +6,6 @@ export const cartModal = ({ state, setState }) => {
 
   // 장바구니 모달 업데이트
   function renderCartModal() {
-    console.log("renderCartModal");
     if (!modal) return;
     // 모달 내용을 새로운 cart 데이터로 업데이트
     modal.innerHTML = CartUI(state.cart);
@@ -15,14 +14,12 @@ export const cartModal = ({ state, setState }) => {
   }
   // quantity-input 요소들의 value를 cart 데이터에 맞춰 업데이트
   function updateQuantityInputs() {
-    console.log("input value 업데이트");
     const quantityInputs = document.querySelectorAll(".quantity-input");
     quantityInputs.forEach((input) => {
       const productId = input.getAttribute("data-product-id");
       const cartItem = state.cart.find((item) => item.productId === productId);
       if (cartItem) {
         input.value = cartItem.quantity;
-        console.log("input value 업데이트 완료", input.value);
       } else {
         input.value = 0;
       }
@@ -40,7 +37,6 @@ export const cartModal = ({ state, setState }) => {
 
   // 장바구니 모달 표시
   function openCartModal() {
-    console.log("openCartModal");
     // 기존 모달이 있다면 제거
     const existingModal = document.getElementById("modal-root");
     if (existingModal) {
@@ -57,7 +53,6 @@ export const cartModal = ({ state, setState }) => {
 
     // 모달 닫기 함수
     const closeModal = () => {
-      console.log("closeModal");
       modal.remove();
       // 스크롤 다시 활성화
       document.body.style.overflow = "";
@@ -91,7 +86,6 @@ export const cartModal = ({ state, setState }) => {
     increaseButtons.forEach((button) => {
       button.onclick = (e) => {
         const productId = e.target.closest("button").getAttribute("data-product-id");
-        console.log("button clicked", productId);
         updateQuantityInputs();
         updateCartItemQuantity(productId, 1);
         // renderCartModal();
@@ -170,9 +164,9 @@ export const cartModal = ({ state, setState }) => {
   // 장바구니 아이템 수량 업데이트
   function updateCartItemQuantity(productId, change) {
     cartStore.actions.updateCartItemQuantity(cartStore.state, productId, change);
-    console.log("set 할거야");
+
     setState({ cart: cartStore.state.cart });
-    console.log("set 했어");
+
     // 장바구니 아이콘 업데이트
     // renderAndBindEvents(ProductListPage(state));
   }
