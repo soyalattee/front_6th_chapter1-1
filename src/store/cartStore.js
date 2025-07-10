@@ -55,7 +55,11 @@ export const cartStore = {
       // localStorage 업데이트
       cartStore.saveToStorage();
     },
-
+    removeAllFromCart: (state) => {
+      state.cart = [];
+      // localStorage 업데이트
+      cartStore.saveToStorage();
+    },
     updateCartItemQuantity: (state, productId, change) => {
       const item = state.cart.find((item) => item.productId === productId);
       if (item) {
