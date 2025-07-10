@@ -158,7 +158,6 @@ async function main() {
   // localStorage에서 cart 데이터 로드
   cartStore.loadFromStorage();
   state.cart = cartStore.state.cart;
-  console.log("state.cart", state.cart);
   updateQuantityInputs();
   const categoriesRes = await getCategories();
   state.categories = categoriesRes;
@@ -370,6 +369,29 @@ function bindCartModalEvents(modal) {
       updateCartModal(modal);
     };
   });
+
+  // 상품 선택 체크박스
+  const checkboxes = modal.querySelectorAll(".cart-item-checkbox");
+  checkboxes.forEach((checkbox) => {
+    checkbox.onclick = (e) => {
+      const productId = e.target.getAttribute("data-product-id");
+      const isChecked = e.target.checked;
+      const cartItem = state.cart.find((item) => item.productId === productId);
+      if (cartItem) {
+        cartItem.isChecked = isChecked;
+      }
+      updateCartModal(modal);
+    };
+  });
+  // 선택한 상품 삭제 버튼
+  const removeSelectedBtn = modal.querySelector("#cart-modal-remove-selected-btn");
+  removeSelectedBtn.onclick = () => {
+    // 체크된 체크박스의 productId 수집
+    const checkedBoxes = document.querySelectorAll(".cart-item-checkbox:checked");
+    const selectedIds = Array.from(checkedBoxes).map((cb) => cb.dataset.productId);
+    selectedIds.forEach((id) => removeFromCart(id));
+    updateCartModal(modal);
+  };
 }
 
 // 장바구니 아이템 수량 업데이트
@@ -400,13 +422,11 @@ function updateCartModal(modal) {
 // quantity-input 요소들의 value를 cart 데이터에 맞춰 업데이트
 function updateQuantityInputs() {
   const quantityInputs = document.querySelectorAll(".quantity-input");
-  console.log("state cart바꾼거아니냐고", state.cart);
   quantityInputs.forEach((input) => {
     const productId = input.getAttribute("data-product-id");
     const cartItem = state.cart.find((item) => item.productId === productId);
     if (cartItem) {
       input.value = cartItem.quantity;
-      console.log("cartId", cartItem.productId, "quantity", input.value);
     } else {
       input.value = 0;
     }

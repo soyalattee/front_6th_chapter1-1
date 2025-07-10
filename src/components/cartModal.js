@@ -1,4 +1,5 @@
 export const cartModal = (cart) => {
+  const selectedCount = cart.filter((item) => item.isChecked).length;
   return `
 <div class="flex min-h-full cart-modal items-end justify-center p-0 sm:items-center sm:p-4">
   <div class="relative bg-white rounded-t-lg sm:rounded-lg shadow-xl w-full max-w-md sm:max-w-lg max-h-[90vh] overflow-hidden">
@@ -49,7 +50,7 @@ export const cartModal = (cart) => {
             <!-- 선택 체크박스 -->
             <label class="flex items-center mr-3">
               <input type="checkbox" class="cart-item-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded 
-            focus:ring-blue-500" data-product-id="${item.productId}">
+            focus:ring-blue-500" data-product-id="${item.productId}" ${item.isChecked ? "checked" : ""}>
             </label>
             <!-- 상품 이미지 -->
             <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden mr-3 flex-shrink-0">
@@ -109,6 +110,10 @@ export const cartModal = (cart) => {
       </div>
       <!-- 액션 버튼들 -->
       <div class="space-y-2">
+        <button id="cart-modal-remove-selected-btn" class="w-full bg-red-600 text-white py-2 px-4 rounded-md 
+                   hover:bg-red-700 transition-colors text-sm">
+          선택한 상품 삭제 (${selectedCount}개)
+        </button>
         <div class="flex gap-2">
           <button id="cart-modal-clear-cart-btn" class="flex-1 bg-gray-600 text-white py-2 px-4 rounded-md 
                    hover:bg-gray-700 transition-colors text-sm">
