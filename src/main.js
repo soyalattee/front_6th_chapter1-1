@@ -383,6 +383,7 @@ function bindCartModalEvents(modal) {
       updateCartModal(modal);
     };
   });
+
   // 선택한 상품 삭제 버튼
   const removeSelectedBtn = modal.querySelector("#cart-modal-remove-selected-btn");
   removeSelectedBtn.onclick = () => {
@@ -390,6 +391,22 @@ function bindCartModalEvents(modal) {
     const checkedBoxes = document.querySelectorAll(".cart-item-checkbox:checked");
     const selectedIds = Array.from(checkedBoxes).map((cb) => cb.dataset.productId);
     selectedIds.forEach((id) => removeFromCart(id));
+    updateCartModal(modal);
+  };
+
+  //전체 선택 버튼
+  const selectAllCheckbox = modal.querySelector("#cart-modal-select-all-checkbox");
+  selectAllCheckbox.onclick = (e) => {
+    const isChecked = e.target.checked;
+    state.cart.forEach((item) => {
+      item.isChecked = isChecked;
+    });
+    updateCartModal(modal);
+  };
+  // 비우기 버튼
+  const clearCartBtn = modal.querySelector("#cart-modal-clear-cart-btn");
+  clearCartBtn.onclick = () => {
+    removeAllFromCart();
     updateCartModal(modal);
   };
 }
@@ -406,6 +423,12 @@ function updateCartItemQuantity(productId, change) {
 // 장바구니에서 아이템 제거
 function removeFromCart(productId) {
   cartStore.actions.removeFromCart(cartStore.state, productId);
+  state.cart = cartStore.state.cart;
+  render(ProductListPage(state));
+}
+//장바구니 비우기
+function removeAllFromCart() {
+  cartStore.actions.removeAllFromCart(cartStore.state);
   state.cart = cartStore.state.cart;
   render(ProductListPage(state));
 }
