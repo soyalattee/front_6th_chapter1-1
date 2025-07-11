@@ -52,8 +52,10 @@ function navigateTo(path) {
 }
 
 function router() {
-  setState({ loading: true });
-  // localStorage에서 cart 데이터 로드
+  if (!page) {
+    setState({ loading: true });
+    // localStorage에서 cart 데이터 로드
+  }
   cartStore.loadFromStorage();
   const { openCartModal, updateQuantityInputs, addToCart, renderCartModal } = cartModal({ state, setState });
   subscribe(() => {
@@ -61,7 +63,6 @@ function router() {
     renderCartModal();
   });
   setState({ cart: cartStore.state.cart });
-
   const route = getRoute();
 
   if (route.page === "list") {
