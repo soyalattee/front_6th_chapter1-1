@@ -3,6 +3,7 @@ import ProductDetailPage from "./pages/ProductDetailPage.js";
 import { cartModal } from "./components/cartModal.js";
 import { cartStore } from "./store/cartStore.js";
 import { state, setState, subscribe } from "./store/stateStore.js";
+import { NotFoundUI } from "./views/NotFountUI.js";
 
 const enableMocking = () =>
   import("./mocks/browser.js").then(({ worker }) =>
@@ -88,7 +89,7 @@ function router() {
     });
     page.createPage({ productId: route.productId });
   } else {
-    document.getElementById("root").innerHTML = "<h1>404 Not Found</h1>";
+    document.getElementById("root").innerHTML = NotFoundUI;
   }
 }
 
