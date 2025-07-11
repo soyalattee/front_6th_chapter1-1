@@ -44,6 +44,8 @@ function getRoute() {
   return { page: "notfound" };
 }
 
+let page;
+
 function navigateTo(path) {
   window.history.pushState({}, "", path);
   router();
@@ -61,9 +63,8 @@ function router() {
   setState({ cart: cartStore.state.cart });
 
   const route = getRoute();
-  let page;
+
   if (route.page === "list") {
-    // route에서 받은 값으로 state.filters, state.pagination 등 초기화
     setState({
       filters: {
         ...state.filters,
@@ -77,17 +78,29 @@ function router() {
         limit: route.limit ? Number(route.limit) : 20,
       },
     });
-    page = ProductListPage({ state, setState, openCartModal, addToCart, navigateTo });
-    subscribe(() => {
+    if (page && page.pageType === "list") {
+      console.log("동일 페이지 이동이야~");
       page.render();
-    });
-    page.createPage();
+    } else {
+      page = ProductListPage({ state, setState, openCartModal, addToCart, navigateTo });
+      page.pageType = "list";
+      subscribe(() => {
+        page.render();
+      });
+      page.createPage();
+    }
   } else if (route.page === "detail") {
-    page = ProductDetailPage({ state, setState, openCartModal, addToCart, navigateTo });
-    subscribe(() => {
+    if (page && page.pageType === "detail" && page.productId === route.productId) {
       page.render();
-    });
-    page.createPage({ productId: route.productId });
+    } else {
+      page = ProductDetailPage({ state, setState, openCartModal, addToCart, navigateTo });
+      page.pageType = "detail";
+      page.productId = route.productId;
+      subscribe(() => {
+        page.render();
+      });
+      page.createPage({ productId: route.productId });
+    }
   } else {
     document.getElementById("root").innerHTML = NotFoundUI;
   }

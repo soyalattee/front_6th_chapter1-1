@@ -5,6 +5,7 @@ import { showToast } from "../components/Toast.js";
 export const ProductListPage = ({ state, openCartModal, addToCart, setState, navigateTo }) => {
   const pageInstance = {};
   const createPage = async () => {
+    console.log("createPage");
     setupScrollInfinity();
     const categoriesRes = await getCategories();
     setState({ categories: categoriesRes });
@@ -27,7 +28,6 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
     };
     const productRes = await getProducts(query);
     setState({ products: productRes.products, filters: productRes.filters, pagination: productRes.pagination });
-    // 렌더링은 여기서 하지 않음
   };
   const setupScrollInfinity = () => {
     window.removeEventListener("scroll", handleScrollInfinity);
@@ -61,6 +61,8 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   //페이지당 상품수 변경
   const onLimitChange = (limit) => {
+    fetchProducts({ limit, page: 1 });
+
     const params = new URLSearchParams({
       ...state.filters,
       limit,
@@ -74,6 +76,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   // 검색
   const onSearch = (searchText) => {
+    fetchProducts({ search: searchText, page: 1 });
     const params = new URLSearchParams({
       ...state.filters,
       search: searchText,
@@ -87,6 +90,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   // 정렬 변경
   const onSortChange = (sortType) => {
+    fetchProducts({ sort: sortType, page: 1 });
     const params = new URLSearchParams({
       ...state.filters,
       sort: sortType,
@@ -100,6 +104,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   // 카테고리 변경
   const onCategoryChange = (category) => {
+    fetchProducts({ category1: category, page: 1 });
     const params = new URLSearchParams({
       ...state.filters,
       category1: category,
@@ -113,6 +118,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   // 카테고리2 변경
   const onCategory2Change = (category) => {
+    fetchProducts({ category2: category, page: 1 });
     const params = new URLSearchParams({
       ...state.filters,
       category2: category,
@@ -126,6 +132,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   // 모든 카테고리 초기화
   const onCategoryReset = () => {
+    fetchProducts({ category1: "", category2: "", page: 1 });
     const params = new URLSearchParams({
       ...state.filters,
       category1: "",
@@ -139,6 +146,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   // category2만 초기화
   const onCategory2Reset = () => {
+    fetchProducts({ category2: "", page: 1 });
     const params = new URLSearchParams({
       ...state.filters,
       category2: "",
@@ -251,6 +259,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
   // pageInstance에 메서드 할당
   pageInstance.createPage = createPage;
   pageInstance.render = render;
+  pageInstance.fetchProducts = fetchProducts;
 
   return pageInstance;
 };
