@@ -27,8 +27,8 @@ export const cartModal = ({ state, setState }) => {
   }
 
   // 장바구니에 상품 추가
-  function addToCart({ product }) {
-    cartStore.actions.addToCart(cartStore.state, product);
+  function addToCart({ product, addQuantity = 1 }) {
+    cartStore.actions.addToCart(cartStore.state, product, addQuantity);
     updateQuantityInputs();
     setState({ cart: cartStore.state.cart });
     // 장바구니 아이콘의 숫자 업데이트

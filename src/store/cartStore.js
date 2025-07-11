@@ -32,18 +32,18 @@ export const cartStore = {
   },
 
   actions: {
-    addToCart: (state, product) => {
+    addToCart: (state, product, addQuantity = 1) => {
       // 이미 장바구니에 있는지 확인
       const existingItem = state.cart.find((item) => item.productId === product.productId);
 
       if (existingItem) {
         // 이미 있으면 수량 증가
-        existingItem.quantity += 1;
+        existingItem.quantity += addQuantity;
       } else {
         // 없으면 새로 추가
         state.cart.push({
           ...product,
-          quantity: 1,
+          quantity: addQuantity,
         });
       }
       // localStorage 업데이트
