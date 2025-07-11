@@ -2,7 +2,7 @@ import { getProducts, getCategories } from "../api/productApi.js";
 import { ProductListUI } from "../views/ProductListUI.js";
 import { showToast } from "../components/Toast.js";
 
-export const ProductListPage = ({ state, openCartModal, addToCart, setState }) => {
+export const ProductListPage = ({ state, openCartModal, addToCart, setState, navigateTo }) => {
   const pageInstance = {};
   const createPage = async () => {
     setupScrollInfinity();
@@ -50,6 +50,10 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState }) =
     setState({ products: [...state.products, ...productRes.products], pagination: productRes.pagination });
     setState({ productInfiniteLoading: false });
     // render();
+  };
+
+  const onProductClick = (productId) => {
+    navigateTo(`/product/${productId}`);
   };
 
   //페이지당 상품수 변경
@@ -157,6 +161,15 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState }) =
           addToCart({ product });
           showToast("장바구니에 추가되었습니다");
         }
+      };
+    });
+
+    // 상품 클릭 이벤트
+    const productItems = document.querySelectorAll(".product-card");
+    productItems.forEach((item) => {
+      item.onclick = (e) => {
+        const productId = e.target.closest(".product-card").getAttribute("data-product-id");
+        onProductClick(productId);
       };
     });
   };

@@ -1,4 +1,5 @@
 import ProductListPage from "./pages/ProductListPage.js";
+import ProductDetailPage from "./pages/ProductDetailPage.js";
 import { cartModal } from "./components/cartModal.js";
 import { cartStore } from "./store/cartStore.js";
 import { state, setState, subscribe } from "./store/stateStore.js";
@@ -10,7 +11,37 @@ const enableMocking = () =>
     }),
   );
 
-function main() {
+// 라우트 객체 정의
+const routes = [
+  {
+    path: /^\/$/,
+    page: "list",
+    parse: () => ({}),
+  },
+  {
+    path: /^\/product\/([^/]+)$/,
+    page: "detail",
+    parse: (match) => ({ productId: match[1] }),
+  },
+];
+
+function getRoute() {
+  const path = window.location.pathname;
+  for (const route of routes) {
+    const match = path.match(route.path);
+    if (match) {
+      return { page: route.page, ...route.parse(match) };
+    }
+  }
+  return { page: "notfound" };
+}
+
+function navigateTo(path) {
+  window.history.pushState({}, "", path);
+  router();
+}
+
+function router() {
   setState({ loading: true });
   // localStorage에서 cart 데이터 로드
   cartStore.loadFromStorage();
@@ -20,28 +51,38 @@ function main() {
     renderCartModal();
   });
   setState({ cart: cartStore.state.cart });
-  //TODO: 일단 productListPage 바로 생성
-  const page = ProductListPage({ state, openCartModal, addToCart, setState });
-  page.createPage();
-  subscribe(() => {
-    page.render();
-  });
+
+  const route = getRoute();
+  let page;
+  if (route.page === "list") {
+    page = ProductListPage({ state, openCartModal, addToCart, setState, navigateTo });
+    page.createPage();
+    subscribe(() => {
+      page.render();
+    });
+  } else if (route.page === "detail") {
+    page = ProductDetailPage({ state, setState, navigateTo });
+    page.createPage({ productId: route.productId });
+    subscribe(() => {
+      page.render();
+    });
+  } else {
+    document.getElementById("root").innerHTML = "<h1>404 Not Found</h1>";
+  }
 }
 
 // 라우터 설정
 function setupRouter() {
-  window.addEventListener("popstate", () => {
-    main();
-  });
+  window.addEventListener("popstate", router);
 }
 
 // 애플리케이션 시작
 if (import.meta.env.MODE !== "test") {
   enableMocking().then(() => {
-    main();
+    router();
     setupRouter();
   });
 } else {
-  main();
+  router();
   setupRouter();
 }
