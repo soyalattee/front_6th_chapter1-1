@@ -17,36 +17,6 @@
         },
       };
     </script>
-    <script type="text/javascript">
-      // GitHub Pages 배포 환경에서만 리다이렉트
-      (function () {
-        const isGitHubPages = window.location.hostname === "soyalattee.github.io";
-        const currentPath = window.location.pathname;
-        const basePath = "/front_6th_chapter1-1";
-
-        if (isGitHubPages && (currentPath === "/" || currentPath === basePath)) {
-          // GitHub Pages에서 루트 경로 접근 시 dist 폴더로 리다이렉트
-          window.location.href = basePath + "/";
-          return;
-        }
-
-        // 로컬 개발 환경 또는 다른 경로에서는 정상 작동
-        if (window.location.search[1] === "/") {
-          var decoded = window.location.search
-            .slice(1)
-            .split("&")
-            .map(function (s) {
-              return s.replace(/~and~/g, "&");
-            })
-            .join("?");
-          window.history.replaceState(
-            null,
-            null,
-            window.location.pathname.slice(0, -1) + decoded + window.location.hash,
-          );
-        }
-      })();
-    </script>
     <script type="module" src="./src/main.js"></script>
   </head>
   <body class="bg-gray-50">
