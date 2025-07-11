@@ -5,7 +5,6 @@ import { showToast } from "../components/Toast.js";
 export const ProductListPage = ({ state, openCartModal, addToCart, setState, navigateTo }) => {
   const pageInstance = {};
   const createPage = async () => {
-    console.log("createPage");
     setupScrollInfinity();
     const categoriesRes = await getCategories();
     setState({ categories: categoriesRes });
@@ -33,7 +32,9 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
     window.removeEventListener("scroll", handleScrollInfinity);
     window.addEventListener("scroll", handleScrollInfinity);
   };
-
+  const cleanupScrollInfinity = () => {
+    window.removeEventListener("scroll", handleScrollInfinity);
+  };
   const handleScrollInfinity = () => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
     if (scrollTop + clientHeight >= scrollHeight - 100 && state.pagination.hasNext && !state.productInfiniteLoading) {
@@ -259,7 +260,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
   // pageInstance에 메서드 할당
   pageInstance.createPage = createPage;
   pageInstance.render = render;
-  pageInstance.fetchProducts = fetchProducts;
+  pageInstance.cleanupScrollInfinity = cleanupScrollInfinity;
 
   return pageInstance;
 };

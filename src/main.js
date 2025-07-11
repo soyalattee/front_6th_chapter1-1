@@ -91,12 +91,10 @@ function router() {
     page.createPage();
     return;
   }
-
+  if (page && page.pageType === "list") {
+    page.cleanupScrollInfinity();
+  }
   if (route.page === "detail") {
-    if (page && page.pageType === "detail" && page.productId === route.productId) {
-      page.render();
-      return;
-    }
     page = ProductDetailPage({ state, setState, openCartModal, addToCart, navigateTo });
     page.pageType = "detail";
     page.productId = route.productId;
