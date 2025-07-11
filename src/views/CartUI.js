@@ -25,8 +25,8 @@ export const CartUI = (cart) => {
         <div class="flex flex-col max-h-[calc(90vh-120px)]">
           <!-- 전체 선택 섹션 -->
           <div class="p-4 border-b border-gray-200 bg-gray-50">
-            <label class="flex items-center text-sm text-gray-700">
-              <input type="checkbox" id="cart-modal-select-all-checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2">
+            <label class="flex items-center text-sm text-gray-700" >
+              <input type="checkbox" id="cart-modal-select-all-checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-2" ${selectedCount === cart.length ? "checked" : ""}>
               전체선택 (${cart.length}개)
             </label>
           </div>
