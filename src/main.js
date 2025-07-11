@@ -4,13 +4,9 @@ import { cartModal } from "./components/cartModal.js";
 import { cartStore } from "./store/cartStore.js";
 import { state, setState, subscribe } from "./store/stateStore.js";
 import { NotFoundUI } from "./views/NotFountUI.js";
+const BASE_PATH = import.meta.env.PROD ? "/front_6th_chapter1-1" : "";
 
-const enableMocking = () =>
-  import("./mocks/browser.js").then(({ worker }) =>
-    worker.start({
-      onUnhandledRequest: "bypass",
-    }),
-  );
+const enableMocking = () => import("./mocks/browser.js").then(({ worker, wokerOptions }) => worker.start(wokerOptions));
 
 // 라우트 객체 정의
 const routes = [
@@ -33,7 +29,7 @@ const routes = [
 ];
 
 function getRoute() {
-  const path = window.location.pathname;
+  const path = getAppPath();
   const searchParams = new URLSearchParams(window.location.search);
   for (const route of routes) {
     const match = path.match(route.path);
@@ -46,8 +42,14 @@ function getRoute() {
 
 let page;
 
+const getFullPath = (appPath) => {
+  return BASE_PATH + appPath;
+};
+const getAppPath = (fullPath = window.location.pathname) => {
+  return fullPath.startsWith(BASE_PATH) ? fullPath.slice(BASE_PATH.length) || "/" : fullPath;
+};
 function navigateTo(path) {
-  window.history.pushState({}, "", path);
+  window.history.pushState({}, "", getFullPath(path));
   router();
 }
 
