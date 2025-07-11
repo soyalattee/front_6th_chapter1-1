@@ -9,7 +9,7 @@ export const ProductDetailPage = ({ state, setState, addToCart, openCartModal, n
   const createPage = async (params) => {
     setState({ loading: true });
     const productRes = await getProduct(params.productId);
-    setState({ product: productRes, loading: false, relatedProducts: [] });
+    setState({ product: productRes, loading: false, relatedProducts: null });
     fetchRelatedProducts({ category1: productRes.category1, category2: productRes.category2 });
   };
   const render = () => {

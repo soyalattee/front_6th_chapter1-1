@@ -52,7 +52,7 @@ function navigateTo(path) {
 }
 
 function router() {
-  if (!page) {
+  if (!page || page.pageType === "detail") {
     setState({ loading: true });
     // localStorage에서 cart 데이터 로드
   }
@@ -95,6 +95,10 @@ function router() {
     page.cleanupScrollInfinity();
   }
   if (route.page === "detail") {
+    // if (page && page.pageType === "detail" && page.productId === route.productId) {
+    //   page.render();
+    //   return;
+    // }
     page = ProductDetailPage({ state, setState, openCartModal, addToCart, navigateTo });
     page.pageType = "detail";
     page.productId = route.productId;
