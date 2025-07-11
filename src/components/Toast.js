@@ -10,7 +10,7 @@ export const showToast = (message) => {
   const toast = document.createElement("div");
   toast.id = "toast-message";
   toast.className =
-    "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full";
+    "fixed bottom-4 right-12 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full";
   toast.textContent = message;
 
   // body에 추가
