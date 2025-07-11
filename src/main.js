@@ -6,7 +6,8 @@ import { state, setState, subscribe } from "./store/stateStore.js";
 import { NotFoundUI } from "./views/NotFountUI.js";
 const BASE_PATH = import.meta.env.PROD ? "/front_6th_chapter1-1" : "";
 
-const enableMocking = () => import("./mocks/browser.js").then(({ worker, wokerOptions }) => worker.start(wokerOptions));
+const enableMocking = () =>
+  import("./mocks/browser.js").then(({ worker, workerOptions }) => worker.start(workerOptions));
 
 // 라우트 객체 정의
 const routes = [
