@@ -6,7 +6,7 @@ export const cartStore = {
   // localStorage에서 cart 데이터 로드
   loadFromStorage() {
     try {
-      const savedCart = localStorage.getItem("cart");
+      const savedCart = localStorage.getItem("shopping_cart");
       if (savedCart) {
         this.state.cart = JSON.parse(savedCart);
       } else {
@@ -21,7 +21,7 @@ export const cartStore = {
   // localStorage에 cart 데이터 저장
   saveToStorage() {
     try {
-      localStorage.setItem("cart", JSON.stringify(this.state.cart));
+      localStorage.setItem("shopping_cart", JSON.stringify(this.state.cart));
     } catch (error) {
       console.error("Failed to save cart to localStorage:", error);
     }
