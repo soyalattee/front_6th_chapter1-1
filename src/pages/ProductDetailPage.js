@@ -1,5 +1,6 @@
 import { ProductDetailUI } from "../views/PrudctDetailUI.js";
 import { getProduct } from "../api/productApi.js";
+import { showToast } from "../components/Toast.js";
 
 export const ProductDetailPage = ({ state, setState, addToCart, openCartModal, navigateTo }) => {
   const pageInstance = {};
@@ -68,6 +69,7 @@ export const ProductDetailPage = ({ state, setState, addToCart, openCartModal, n
     const quantityInput = document.getElementById("quantity-input");
     const quantity = parseInt(quantityInput.value);
     addToCart({ productId, quantity });
+    showToast("장바구니에 추가되었습니다");
   };
   //수량 증가 버튼 클릭
   const onQuantityIncreaseClick = () => {
