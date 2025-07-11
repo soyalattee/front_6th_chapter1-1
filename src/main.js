@@ -4,7 +4,7 @@ import { cartModal } from "./components/cartModal.js";
 import { cartStore } from "./store/cartStore.js";
 import { state, setState, subscribe } from "./store/stateStore.js";
 import { NotFoundUI } from "./views/NotFountUI.js";
-const BASE_PATH = import.meta.env === undefined ? "/front_6th_chapter1-1" : "";
+const BASE_PATH = import.meta.env.PROD ? "/front_6th_chapter1-1" : "";
 
 const enableMocking = () => import("./mocks/browser.js").then(({ worker, wokerOptions }) => worker.start(wokerOptions));
 
