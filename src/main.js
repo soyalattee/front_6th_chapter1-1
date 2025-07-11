@@ -80,31 +80,34 @@ function router() {
       },
     });
     if (page && page.pageType === "list") {
-      console.log("동일 페이지 이동이야~");
       page.render();
-    } else {
-      page = ProductListPage({ state, setState, openCartModal, addToCart, navigateTo });
-      page.pageType = "list";
-      subscribe(() => {
-        page.render();
-      });
-      page.createPage();
+      return;
     }
-  } else if (route.page === "detail") {
+    page = ProductListPage({ state, setState, openCartModal, addToCart, navigateTo });
+    page.pageType = "list";
+    subscribe(() => {
+      page.render();
+    });
+    page.createPage();
+    return;
+  }
+
+  if (route.page === "detail") {
     if (page && page.pageType === "detail" && page.productId === route.productId) {
       page.render();
-    } else {
-      page = ProductDetailPage({ state, setState, openCartModal, addToCart, navigateTo });
-      page.pageType = "detail";
-      page.productId = route.productId;
-      subscribe(() => {
-        page.render();
-      });
-      page.createPage({ productId: route.productId });
+      return;
     }
-  } else {
-    document.getElementById("root").innerHTML = NotFoundUI;
+    page = ProductDetailPage({ state, setState, openCartModal, addToCart, navigateTo });
+    page.pageType = "detail";
+    page.productId = route.productId;
+    subscribe(() => {
+      page.render();
+    });
+    page.createPage({ productId: route.productId });
+    return;
   }
+  // 라우트가 없으면 404 페이지 표시
+  document.getElementById("root").innerHTML = NotFoundUI;
 }
 
 // 라우터 설정
