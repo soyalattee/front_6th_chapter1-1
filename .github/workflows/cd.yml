@@ -25,11 +25,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Clean previous build
-        run: |
-          rm -rf dist
-          rm -rf node_modules/.vite
-
       - name: Build
         run: pnpm build
         env:
@@ -41,7 +36,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          clean: true
-          force_orphan: true
-          user_name: "github-actions[bot]"
-          user_email: "github-actions[bot]@users.noreply.github.com"
