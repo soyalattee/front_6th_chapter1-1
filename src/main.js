@@ -55,17 +55,17 @@ function router() {
   const route = getRoute();
   let page;
   if (route.page === "list") {
-    page = ProductListPage({ state, openCartModal, addToCart, setState, navigateTo });
+    page = ProductListPage({ state, setState, openCartModal, addToCart, navigateTo });
+    subscribe(() => {
+      page.render();
+    });
     page.createPage();
-    subscribe(() => {
-      page.render();
-    });
   } else if (route.page === "detail") {
-    page = ProductDetailPage({ state, setState, navigateTo });
-    page.createPage({ productId: route.productId });
+    page = ProductDetailPage({ state, setState, openCartModal, addToCart, navigateTo });
     subscribe(() => {
       page.render();
     });
+    page.createPage({ productId: route.productId });
   } else {
     document.getElementById("root").innerHTML = "<h1>404 Not Found</h1>";
   }
