@@ -1,16 +1,16 @@
 import { ProductDetailUI } from "../views/PrudctDetailUI.js";
 import { getProduct } from "../api/productApi.js";
 import { showToast } from "../components/Toast.js";
+import { getProducts } from "../api/productApi.js";
 
 export const ProductDetailPage = ({ state, setState, addToCart, openCartModal, navigateTo }) => {
   const pageInstance = {};
 
   const createPage = async (params) => {
     setState({ loading: true });
-    console.log("body", document.body.innerHTML);
     const productRes = await getProduct(params.productId);
-    setState({ product: productRes, loading: false });
-    console.log("로딩완료");
+    setState({ product: productRes, loading: false, relatedProducts: [] });
+    fetchRelatedProducts({ category1: productRes.category1, category2: productRes.category2 });
   };
   const render = () => {
     const root = document.getElementById("root");
@@ -18,6 +18,13 @@ export const ProductDetailPage = ({ state, setState, addToCart, openCartModal, n
     bindProductDetailEvents();
   };
 
+  const fetchRelatedProducts = async ({ category1, category2 }) => {
+    const relatedProductRes = await getProducts({ category1, category2 });
+    const exceptCurProduct = relatedProductRes.products.filter(
+      (product) => product.productId !== state.product.productId,
+    );
+    setState({ relatedProducts: exceptCurProduct });
+  };
   const bindProductDetailEvents = () => {
     // 관련 상품 클릭
     const productItems = document.querySelectorAll(".related-product-card");
