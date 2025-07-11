@@ -19,7 +19,12 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
 
   const fetchProducts = async (params = {}) => {
     // 기존 state.filters와 params를 합쳐서 요청
-    const query = { ...state.filters, ...params, page: params.page || state.pagination.page };
+    const query = {
+      ...state.filters,
+      ...params,
+      page: params.page || state.pagination.page,
+      limit: params.limit || state.pagination.limit,
+    };
     const productRes = await getProducts(query);
     setState({ products: productRes.products, filters: productRes.filters, pagination: productRes.pagination });
     // 렌더링은 여기서 하지 않음
@@ -55,25 +60,95 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
   };
 
   //페이지당 상품수 변경
-  const onLimitChange = (limit) => fetchProducts({ limit: limit, page: 1 });
+  const onLimitChange = (limit) => {
+    const params = new URLSearchParams({
+      ...state.filters,
+      limit,
+      sort: state.filters.sort,
+      search: state.filters.search,
+      category1: state.filters.category1,
+      category2: state.filters.category2,
+    });
+    navigateTo(`/?${params.toString()}`);
+  };
 
   // 검색
-  const onSearch = (searchText) => fetchProducts({ search: searchText, page: 1 });
+  const onSearch = (searchText) => {
+    const params = new URLSearchParams({
+      ...state.filters,
+      search: searchText,
+      sort: state.filters.sort,
+      limit: state.filters.limit,
+      category1: state.filters.category1,
+      category2: state.filters.category2,
+    });
+    navigateTo(`/?${params.toString()}`);
+  };
 
   // 정렬 변경
-  const onSortChange = (sortType) => fetchProducts({ sort: sortType, page: 1 });
+  const onSortChange = (sortType) => {
+    const params = new URLSearchParams({
+      ...state.filters,
+      sort: sortType,
+      search: state.filters.search,
+      limit: state.filters.limit,
+      category1: state.filters.category1,
+      category2: state.filters.category2,
+    });
+    navigateTo(`/?${params.toString()}`);
+  };
 
   // 카테고리 변경
-  const onCategoryChange = (category) => fetchProducts({ category1: category, page: 1 });
+  const onCategoryChange = (category) => {
+    const params = new URLSearchParams({
+      ...state.filters,
+      category1: category,
+      sort: state.filters.sort,
+      search: state.filters.search,
+      limit: state.filters.limit,
+      category2: state.filters.category2,
+    });
+    navigateTo(`/?${params.toString()}`);
+  };
 
   // 카테고리2 변경
-  const onCategory2Change = (category) => fetchProducts({ category2: category, page: 1 });
+  const onCategory2Change = (category) => {
+    const params = new URLSearchParams({
+      ...state.filters,
+      category2: category,
+      sort: state.filters.sort,
+      search: state.filters.search,
+      limit: state.filters.limit,
+      category1: state.filters.category1,
+    });
+    navigateTo(`/?${params.toString()}`);
+  };
 
   // 모든 카테고리 초기화
-  const onCategoryReset = () => fetchProducts({ category1: "", category2: "", page: 1 });
+  const onCategoryReset = () => {
+    const params = new URLSearchParams({
+      ...state.filters,
+      category1: "",
+      category2: "",
+      sort: state.filters.sort,
+      search: state.filters.search,
+      limit: state.filters.limit,
+    });
+    navigateTo(`/?${params.toString()}`);
+  };
 
   // category2만 초기화
-  const onCategory2Reset = () => fetchProducts({ category2: "", page: 1 });
+  const onCategory2Reset = () => {
+    const params = new URLSearchParams({
+      ...state.filters,
+      category2: "",
+      sort: state.filters.sort,
+      search: state.filters.search,
+      limit: state.filters.limit,
+      category1: state.filters.category1,
+    });
+    navigateTo(`/?${params.toString()}`);
+  };
 
   const bindProductListEvents = () => {
     // 검색
@@ -153,6 +228,7 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
     const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
     addToCartButtons.forEach((button) => {
       button.onclick = (e) => {
+        e.stopPropagation();
         const productId = e.target.getAttribute("data-product-id");
         const product = state.products.find((p) => p.productId === productId);
         if (product) {

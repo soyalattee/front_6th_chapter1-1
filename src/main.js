@@ -16,7 +16,13 @@ const routes = [
   {
     path: /^\/$/,
     page: "list",
-    parse: () => ({}),
+    parse: (match, searchParams) => ({
+      limit: searchParams.get("limit"),
+      sort: searchParams.get("sort"),
+      search: searchParams.get("search"),
+      category1: searchParams.get("category1"),
+      category2: searchParams.get("category2"),
+    }),
   },
   {
     path: /^\/product\/([^/]+)$/,
@@ -27,10 +33,11 @@ const routes = [
 
 function getRoute() {
   const path = window.location.pathname;
+  const searchParams = new URLSearchParams(window.location.search);
   for (const route of routes) {
     const match = path.match(route.path);
     if (match) {
-      return { page: route.page, ...route.parse(match) };
+      return { page: route.page, ...route.parse(match, searchParams) };
     }
   }
   return { page: "notfound" };
@@ -55,6 +62,20 @@ function router() {
   const route = getRoute();
   let page;
   if (route.page === "list") {
+    // route에서 받은 값으로 state.filters, state.pagination 등 초기화
+    setState({
+      filters: {
+        ...state.filters,
+        search: route.search || "",
+        sort: route.sort || "price_asc",
+        category1: route.category1 || "",
+        category2: route.category2 || "",
+      },
+      pagination: {
+        ...state.pagination,
+        limit: route.limit ? Number(route.limit) : 20,
+      },
+    });
     page = ProductListPage({ state, setState, openCartModal, addToCart, navigateTo });
     subscribe(() => {
       page.render();
