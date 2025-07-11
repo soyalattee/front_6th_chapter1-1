@@ -34,15 +34,23 @@ export const ProductDetailUI = (state) => {
         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
         </svg>
-        <button class="breadcrumb-link" data-category1="${state.product.category1}">
+       ${
+         state.product
+           ? `<button class="breadcrumb-link" data-category1="${state.product.category1}">
           ${state.product.category1}
-        </button>
+        </button>`
+           : ""
+       }
         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
         </svg>
-        <button class="breadcrumb-link" data-category2="${state.product.category2}">
+        ${
+          state.product
+            ? `<button class="breadcrumb-link" data-category2="${state.product.category2}">
           ${state.product.category2}
-        </button>
+        </button>`
+            : ""
+        }
       </div>
     </nav>
      ${
@@ -55,7 +63,6 @@ export const ProductDetailUI = (state) => {
          </div>`
          : ``
      }
-
      ${
        !state.loading && state.product
          ? `
