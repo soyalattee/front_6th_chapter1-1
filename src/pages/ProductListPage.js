@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { getProducts, getCategories } from "../api/productApi.js";
 import { ProductListUI } from "../views/ProductListUI.js";
 import { showToast } from "../components/Toast.js";
@@ -64,98 +65,112 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
   const onLimitChange = (limit) => {
     fetchProducts({ limit, page: 1 });
 
-    const params = new URLSearchParams({
-      ...state.filters,
-      limit,
-      sort: state.filters.sort,
-      search: state.filters.search,
-      category1: state.filters.category1,
-      category2: state.filters.category2,
-    });
+    const params = new URLSearchParams(
+      Object.entries({
+        ...state.filters,
+        limit,
+        sort: state.filters.sort,
+        search: state.filters.search,
+        category1: state.filters.category1,
+        category2: state.filters.category2,
+      }).filter(([_, value]) => value !== undefined && value !== null && value !== ""),
+    );
     navigateTo(`/?${params.toString()}`);
   };
 
   // 검색
   const onSearch = (searchText) => {
     fetchProducts({ search: searchText, page: 1 });
-    const params = new URLSearchParams({
-      ...state.filters,
-      search: searchText,
-      sort: state.filters.sort,
-      limit: state.filters.limit,
-      category1: state.filters.category1,
-      category2: state.filters.category2,
-    });
+    const params = new URLSearchParams(
+      Object.entries({
+        ...state.filters,
+        search: searchText,
+        sort: state.filters.sort,
+        limit: state.filters.limit,
+        category1: state.filters.category1,
+        category2: state.filters.category2,
+      }).filter(([_, value]) => value !== undefined && value !== null && value !== ""),
+    );
     navigateTo(`/?${params.toString()}`);
   };
 
   // 정렬 변경
   const onSortChange = (sortType) => {
     fetchProducts({ sort: sortType, page: 1 });
-    const params = new URLSearchParams({
-      ...state.filters,
-      sort: sortType,
-      search: state.filters.search,
-      limit: state.filters.limit,
-      category1: state.filters.category1,
-      category2: state.filters.category2,
-    });
+    const params = new URLSearchParams(
+      Object.entries({
+        ...state.filters,
+        sort: sortType,
+        search: state.filters.search,
+        limit: state.filters.limit,
+        category1: state.filters.category1,
+        category2: state.filters.category2,
+      }).filter(([_, value]) => value !== undefined && value !== null && value !== ""),
+    );
     navigateTo(`/?${params.toString()}`);
   };
 
   // 카테고리 변경
   const onCategoryChange = (category) => {
     fetchProducts({ category1: category, page: 1 });
-    const params = new URLSearchParams({
-      ...state.filters,
-      category1: category,
-      sort: state.filters.sort,
-      search: state.filters.search,
-      limit: state.filters.limit,
-      category2: state.filters.category2,
-    });
+    const params = new URLSearchParams(
+      Object.entries({
+        ...state.filters,
+        category1: category,
+        sort: state.filters.sort,
+        search: state.filters.search,
+        limit: state.filters.limit,
+        category2: state.filters.category2,
+      }).filter(([_, value]) => value !== undefined && value !== null && value !== ""),
+    );
     navigateTo(`/?${params.toString()}`);
   };
 
   // 카테고리2 변경
   const onCategory2Change = (category) => {
     fetchProducts({ category2: category, page: 1 });
-    const params = new URLSearchParams({
-      ...state.filters,
-      category2: category,
-      sort: state.filters.sort,
-      search: state.filters.search,
-      limit: state.filters.limit,
-      category1: state.filters.category1,
-    });
+    const params = new URLSearchParams(
+      Object.entries({
+        ...state.filters,
+        category2: category,
+        sort: state.filters.sort,
+        search: state.filters.search,
+        limit: state.filters.limit,
+        category1: state.filters.category1,
+      }).filter(([_, value]) => value !== undefined && value !== null && value !== ""),
+    );
     navigateTo(`/?${params.toString()}`);
   };
 
   // 모든 카테고리 초기화
   const onCategoryReset = () => {
     fetchProducts({ category1: "", category2: "", page: 1 });
-    const params = new URLSearchParams({
-      ...state.filters,
-      category1: "",
-      category2: "",
-      sort: state.filters.sort,
-      search: state.filters.search,
-      limit: state.filters.limit,
-    });
+    const params = new URLSearchParams(
+      Object.entries({
+        ...state.filters,
+        category1: "",
+        category2: "",
+        sort: state.filters.sort,
+        search: state.filters.search,
+        limit: state.filters.limit,
+      }).filter(([_, value]) => value !== undefined && value !== null && value !== ""),
+    );
     navigateTo(`/?${params.toString()}`);
   };
 
   // category2만 초기화
   const onCategory2Reset = () => {
     fetchProducts({ category2: "", page: 1 });
-    const params = new URLSearchParams({
-      ...state.filters,
-      category2: "",
-      sort: state.filters.sort,
-      search: state.filters.search,
-      limit: state.filters.limit,
-      category1: state.filters.category1,
-    });
+    const params = new URLSearchParams(
+      Object.entries({
+        ...state.filters,
+        category2: "",
+        sort: state.filters.sort,
+        search: state.filters.search,
+        limit: state.filters.limit,
+        category1: state.filters.category1,
+      }).filter(([_, value]) => value !== undefined && value !== null && value !== ""),
+    );
     navigateTo(`/?${params.toString()}`);
   };
 
