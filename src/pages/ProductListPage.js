@@ -6,12 +6,10 @@ export const ProductListPage = ({ state, openCartModal, addToCart, setState, nav
   const pageInstance = {};
   const createPage = async () => {
     setupScrollInfinity();
-    // render();
     const categoriesRes = await getCategories();
     setState({ categories: categoriesRes });
     await fetchProducts();
     setState({ loading: false });
-    // render();
   };
   const render = () => {
     const root = document.getElementById("root");
